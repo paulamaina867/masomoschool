@@ -30,7 +30,7 @@ const HomeComponent = () => {
             <img src="images/banner1.jpg" alt="Welcome image" className='w-100 img-fluid' style={{ maxHeight: '500px', objectFit : 'cover' }}/>
 
             <div className="hero-text position-absolute top-50 start-50 translate-middle text-center bg-dark bg-opacity-50 p-4 rounded">
-                <h1>Empering Minds Through Competence</h1>
+                <h1>Empowering Minds Through Competence</h1>
                 <p>Masomo School is a leading institution dedicated to providing quality Education rooted in the competency-Based curriculum (CBC) as set by the Kenyan Ministry of Education.</p>
             </div>
         </section>

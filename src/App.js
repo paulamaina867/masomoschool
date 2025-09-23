@@ -5,7 +5,7 @@ import 'bootstrap/dist/js/bootstrap.min.js'
 // import the router
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomeComponent from './components/HomeComponent';
-import Notfound from './components/Notfound';
+import NotFound from './components/NotFound';
 import NotAuthorized from './components/NotAuthorized';
 import RegisterComponent from './components/RegisterComponent';
 import LoginComponent from './components/LoginComponent';
@@ -40,7 +40,7 @@ function App() {
         <Route path='/teacher-dashboard' element={< TeacherDashboard />} />
         <Route path='/parent-dashboard' element={< ParentDashboard />} />
 
-        <Route path='*' element={<Notfound />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
       </AuthProvider>
     </Router>
