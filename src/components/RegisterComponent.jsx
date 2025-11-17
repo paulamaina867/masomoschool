@@ -1,106 +1,120 @@
 import axios from 'axios';
-import React from 'react'
-import { useState } from 'react'
-import {  useNavigate, Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 
 const RegisterComponent = () => {
+  // Form state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [secretKey, setSecretKey] = useState('');
 
-    // Create hooks that enables you to capture different states
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [secretKey, setSecretKey] = useState('');
+  // App state
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
 
-    // Define three additiona hooks to manage the states
-    const [error, setError] = useState('');
-    const [success, setSuccess] = useState('');
-    const [loading, setLoading] = useState('');
+  const navigate = useNavigate();
+  const url = 'https://kindergartenschool.onrender.com/api/auth';
 
-    // specify the url and also declare the useNavigate hook
-    const url = 'https://kindergartenschool.onrender.com/api/auth'
-    const navigate = useNavigate();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setLoading(true);
+    setLoadingMessage('Please wait as registration is in progress...');
 
-    const handleSubmit = async(e) =>{
-        e.preventDefault();
-        setError('');
-        setSuccess('');
-        setLoading('Please wait as Registration is in Progress...');
+    try {
+      const data = { name, email, password, secretKey };
 
+      // Axios POST with explicit headers
+      const res = await axios.post(url, data, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-        try{
-            const data = {name, email, password, secretKey};
+      console.log("Full API Response:", res.data); // Debugging: check the response
 
-            const res = await axios.post(url, data);
+      // You can adjust based on actual API response
+      setSuccess('Registration successful! Redirecting to Login Page...');
+      alert('Registration successful! Redirecting to Login Page...');
 
-            console.log("Registration success", res.data)
-
-            setLoading('')
-            setSuccess('Registration successful! Redirecting to the Login Page...')
-
-            alert('Registration successful! Redirecting to the Login Page...')
-            navigate('/')
-        }
-        catch(err){
-            setLoading('');
-            setError("Registration Failed. Please try again")
-        }
+      navigate('/login');
+    } catch (err) {
+      console.error("Registration error:", err); // Debugging: log the error
+      if (err.response) {
+        // If backend returned an error status
+        setError(err.response.data.message || `Server Error: ${err.response.status}`);
+      } else {
+        // Network or CORS error
+        setError('Network or CORS error. Check console.');
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMessage('');
     }
+  };
+
   return (
     <div className="container mt-5" style={{ maxWidth: '500px' }}>
-        <form onSubmit={handleSubmit} className='shadow card p-4 bg-light rounded'>
-            <h1 className='text-center text-success'>Masomo School</h1>
-            <h2 className='text-center mb-4 text-success'>Register</h2>
+      <form onSubmit={handleSubmit} className="shadow card p-4 bg-light rounded">
+        <h1 className="text-center text-success">Masomo School</h1>
+        <h2 className="text-center mb-4 text-success">Register</h2>
 
-                {error ? <div className="alert alert-danger">{error}</div> : null}
-                {success ? <div className="alert alert-success">{success}</div> : null}
-                {loading ? <div className="alert alert-info">{loading}</div> : null}
+        {error && <div className="alert alert-danger">{error}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+        {loading && <div className="alert alert-info">{loadingMessage}</div>}
 
-            <input type="text"
-            placeholder='Enter Full Name Here'
-            className='form-control mb-3'
-            onChange={(e) => setName(e.target.value)}
-            value={name}
-            required />
+        <input
+          type="text"
+          placeholder="Enter Full Name Here"
+          className="form-control mb-3"
+          onChange={(e) => setName(e.target.value)}
+          value={name}
+          required
+        />
 
-            {/* {name} */}
+        <input
+          type="email"
+          placeholder="Enter the Email Address Here"
+          className="form-control mb-3"
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          required
+        />
 
-            <input type="email" 
-            placeholder='Enter the Email Address Here'
-            className='form-control mb-3'
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required />
+        <input
+          type="password"
+          placeholder="Type password Here"
+          className="form-control mb-3"
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          required
+        />
 
-            {/* {email} */}
+        <input
+          type="text"
+          placeholder="Enter The Secret Key"
+          className="form-control mb-3"
+          onChange={(e) => setSecretKey(e.target.value)}
+          value={secretKey}
+          required
+        />
 
-            <input type="password" 
-            placeholder='Type password Here'
-            className='form-control mb-3'
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            required />
-            {/* {password} */}
+        <div className="d-grid mb-3">
+          <button type="submit" className="btn btn-success" disabled={loading}>
+            Register
+          </button>
+        </div>
 
-            <input type="text"
-            placeholder='Enter The Secret Key'
-            className='form-control mb-3'
-            onChange={(e) => setSecretKey(e.target.value)}
-            value={secretKey}
-            required />
-
-            {/* {secretKey} */}
-
-            <div className='d-grid mb-3'>
-                <button type='submit' className='btn btn-success'>Register</button>
-            </div>
-            <div className="text-center">
-                <p>Alredy have an Account? <Link to="/login">Login</Link></p>
-                
-                
-            </div>
-        </form>
+        <div className="text-center">
+          <p>
+            Already have an Account? <Link to="/login">Login</Link>
+          </p>
+        </div>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default RegisterComponent
+export default RegisterComponent;

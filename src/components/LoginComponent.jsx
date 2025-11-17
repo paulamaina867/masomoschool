@@ -1,105 +1,128 @@
 import axios from 'axios';
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginComponent = () => {
-    // Define the hooks to help you capture the different states
-    const[email, setEmail] = useState('');
-    const[password, setPassword] = useState('');
+  // Form state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-    // Define the three hooks to capture the state of the application
-    const[loading, setLoading] = useState('');
-    const[error, setError] = useState('');
-    const navigate = useNavigate();
+  // App state
+  const [loading, setLoading] = useState(false);
+  const [loadingMessage, setLoadingMessage] = useState('');
+  const [error, setError] = useState('');
 
-    // define the url for the api endpoint
-    const url = "https://kindergartenschool.onrender.com/api/auth/login"
+  const navigate = useNavigate();
 
-    // define a function to handle the submit action
-    const handleSubmit = async (e)=>{
-        // prevent your site from reloading
-        e.preventDefault()
-        setError('')
-        setLoading("Logging in Please wait...")
+  const url = "https://kindergartenschool.onrender.com/api/auth/login";
 
-        try{
-            const data = {email, password};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    setLoadingMessage('Logging in... Please wait.');
 
-            const res = await axios.post(url, data);
+    try {
+      const data = { email, password };
 
-            const {token, user} = res.data
+      // Axios POST with explicit headers
+      const res = await axios.post(url, data, {
+        headers: { "Content-Type": "application/json" },
+      });
 
-            // console.log("The token is: ", token)
-            // console.log("The user details are: ", user)
+      console.log("Full API Response:", res.data); // Debugging: check the response
 
-            // use the localstorage to store the two details
-            localStorage.setItem('token', token);
-            localStorage.setItem('user', JSON.stringify(user))
+      // Adjust destructuring based on actual response structure
+      const { token, user } = res.data;
 
-            // based on the user role erdirect a perso a given dashboard
-            if(user.role === 'admin'){
-                navigate('/admin-dashboard')
-            } else if (user.role ==='teacher'){
-                navigate('/teacher-dashboard')
-            } else if (user.role === 'parent'){
-                navigate('/parent-dashboard')
-            } else{
-                navigate('/');
-            }
-        }
-        catch(error){
-            setLoading('');
-            if(error.response && error.response.status === 401){
-                setError(error.response.data.message)
-            } else{
-                setError("Network Or server Error")
-            }
-        }
+      if (!token || !user) {
+        throw new Error("Invalid response from server");
+      }
+
+      console.log("User object:", user); // Debugging: check user and role
+      console.log("Token:", token);
+
+      // Store in localStorage
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+
+      // Navigate based on role
+      switch (user.role) {
+        case 'admin':
+          navigate('/admin-dashboard');
+          break;
+        case 'teacher':
+          navigate('/teacher-dashboard');
+          break;
+        case 'parent':
+          navigate('/parent-dashboard');
+          break;
+        default:
+          console.warn("Unknown role, redirecting to home");
+          navigate('/');
+      }
+    } catch (err) {
+      console.error("Login error:", err); // Debugging: log the error
+      if (err.response && err.response.status === 401) {
+        setError(err.response.data.message || "Invalid credentials");
+      } else if (err.response) {
+        setError(`Server Error: ${err.response.status}`);
+      } else {
+        setError("Network or CORS error. Check console.");
+      }
+    } finally {
+      setLoading(false);
+      setLoadingMessage('');
     }
+  };
 
   return (
-    <div className="container mt-5" style={{ maxWidth : '500px' }}>
-        <form onSubmit={handleSubmit} className="card shadow p-4 bg-light rounded">
-            <h2 className="text-center text-success">Masomo School</h2>
-            <h3 className="text-center text-success">Login</h3>
+    <div className="container mt-5" style={{ maxWidth: '500px' }}>
+      <form onSubmit={handleSubmit} className="card shadow p-4 bg-light rounded">
+        <h2 className="text-center text-success">Masomo School</h2>
+        <h3 className="text-center text-success">Login</h3>
 
-            {/* bind the messages */}
-             {loading ? <div className="alert alert-info">{loading}</div> : null}
-            {error ? <div className="alert alert-danger">{error}</div> : null}
-            
+        {loading && <div className="alert alert-info">{loadingMessage}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
 
-            <label >Email: </label> 
-            <input type="email" 
-            className='form-control' 
-            placeholder='Enter the email Address Here...'
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            required /> <br />
+        <label htmlFor="email">Email:</label>
+        <input
+          id="email"
+          type="email"
+          className="form-control"
+          placeholder="Enter your email"
+          onChange={(e) => setEmail(e.target.value)}
+          value={email}
+          required
+        />
+        <br />
 
-            {/* {email} */}
+        <label htmlFor="password">Password:</label>
+        <input
+          id="password"
+          type="password"
+          className="form-control"
+          placeholder="Enter your password"
+          onChange={(e) => setPassword(e.target.value)}
+          value={password}
+          required
+        />
+        <br />
 
-            <label >Password:</label>
-            <input type="password" 
-            placeholder="Enter the Password Here..." 
-            className='form-control'
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            required/> <br />
+        <div className="d-grid mb-3">
+          <button className="btn btn-success" type="submit" disabled={loading}>
+            Login
+          </button>
+        </div>
 
-            {/* {password} */}
-
-            <div className="d-grid mb-3">
-                <button className="btn btn-success" type='submit'>Login</button>
-            </div>
-            <div className="text-center">
-                <p>
-                    Don't have an Account? 
-                    <Link to='/register'>Register</Link>
-                </p>
-            </div>
-        </form>
+        <div className="text-center">
+          <p>
+            Don't have an Account? <Link to="/register">Register</Link>
+          </p>
+        </div>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default LoginComponent
+export default LoginComponent;
