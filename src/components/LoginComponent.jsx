@@ -13,7 +13,7 @@ const LoginComponent = () => {
     const navigate = useNavigate();
 
     // define the url for the api endpoint
-    const url = "https://kindergartenapi.onrender.com/api/auth/login"
+    const url = "https://kindergartenschool.onrender.com/api/auth/login"
 
     // define a function to handle the submit action
     const handleSubmit = async (e)=>{

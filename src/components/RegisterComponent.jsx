@@ -17,7 +17,7 @@ const RegisterComponent = () => {
     const [loading, setLoading] = useState('');
 
     // specify the url and also declare the useNavigate hook
-    const url = 'https://kindergartenapi.onrender.com/api/auth'
+    const url = 'https://kindergartenschool.onrender.com/api/auth'
     const navigate = useNavigate();
 
     const handleSubmit = async(e) =>{
