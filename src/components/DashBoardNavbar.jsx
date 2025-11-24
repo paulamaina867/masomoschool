@@ -1,5 +1,6 @@
+
 import React, { useContext } from 'react'
-import { AuthContext } from '../context/AuthContext'
+import { AuthContext } from '../Context/AuthContext'
 
 const DashboardNavbar = () => {
     // get the logged in user and the logout function by use of the useContent hook inside of AuthContex

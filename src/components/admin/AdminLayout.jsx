@@ -1,5 +1,5 @@
 import React from 'react'
-import DashboardNavbar from '../DashBoardNavbar'
+import DashboardNavbar from '../DashboardNavbar'
 
 const AdminLayout = () => {
   return (

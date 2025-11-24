@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast, ToastContainer } from 'react-toastify'
-import { AuthContext } from '../../../context/AuthContext'
+import { AuthContext } from '../../../Context/AuthContext'
 import axios from 'axios'
 
 const ClassAdd = () => {

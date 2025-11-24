@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { AuthContext } from '../../../context/AuthContext';
+import { AuthContext } from '../../../Context/AuthContext';
 
 const TeacherEdit = () => {
   const [name, setName] = useState('');
